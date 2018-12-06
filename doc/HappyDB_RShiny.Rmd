@@ -1,29 +1,12 @@
 ---
 title: "Happy Moments"
-author: "Arpita Shah and Tian Zheng"
+author: "Zuleimy Alcantara"
 output: html_notebook
 runtime: shiny
 ---
 
-HappyDB is a corpus of 100,000 crowd-sourced happy moments via Amazon's Mechanical Turk. You can read more about it on https://arxiv.org/abs/1801.07746.
-
-Here, we explore this data set and try to answer the question, "What makes people happy?"
-
-### Step 0 - Load all the required libraries
-
-From the packages' descriptions:
-
-+ `tidyverse` is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures;
-+ `tidytext` allows text mining using 'dplyr', 'ggplot2', and other tidy tools;
-+ `DT` provides an R interface to the JavaScript library DataTables;
-+ `scales` map data to aesthetics, and provide methods for automatically determining breaks and labels for axes and legends;
-+ `wordcloud2` provides an HTML5 interface to wordcloud for data visualization;
-+ `gridExtra` contains miscellaneous functions for "grid" graphics;
-+ `ngram` is for constructing n-grams (“tokenizing”), as well as generating new text based on the n-gram structure of a given text input (“babbling”);
-+ `Shiny` is an R package that makes it easy to build interactive web apps straight from R;
-
 ```{r load libraries, warning=FALSE, message=FALSE}
-
+#load libraries
 library(tidyverse)
 library(tidytext)
 library(DT)
@@ -32,24 +15,21 @@ library(wordcloud2)
 library(gridExtra)
 library(ngram)
 library(shiny) 
+library(leaflet)
+library(dplyr)
 ```
 
-### Step 1 - Load the processed text data along with demographic information on contributors
 
-We use the processed data for our analysis and combine it with the demographic information available.
-
-```{r load data, warning=FALSE, message=FALSE}
+```{r load data, warning=FALSE, message=FALSE} 
+#load data
 hm_data <- read_csv("../output/processed_moments.csv")
 
 urlfile<-'https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/demographic.csv'
 demo_data <- read_csv(urlfile)
 ```
 
-### Combine both the data sets and keep the required columns for analysis
-
-We select a subset of the data that satisfies specific row conditions.
-
 ```{r combining data, warning=FALSE, message=FALSE}
+### Combine both the data sets and keep the required columns for analysis
 hm_data <- hm_data %>%
   inner_join(demo_data, by = "wid") %>%
   select(wid,
@@ -71,12 +51,11 @@ hm_data <- hm_data %>%
                                         months_3 = "3m", hours_24 = "24h"))
 ```
 
-```{r}
-datatable(hm_data)
-```
-### Create a bag of words using the text data
+
+
 
 ```{r bag of words, warning=FALSE, message=FALSE}
+### Create a bag of words using the text data
 bag_of_words <-  hm_data %>%
   unnest_tokens(word, text)
 
@@ -84,9 +63,10 @@ word_count <- bag_of_words %>%
   count(word, sort = TRUE)
 ```
 
-### Create bigrams using the text data
+
 
 ```{r bigram, warning=FALSE, message=FALSE}
+### Create bigrams using the text data
 hm_bigrams <- hm_data %>%
   filter(count != 1) %>%
   unnest_tokens(bigram, text, token = "ngrams", n = 2)
@@ -96,11 +76,11 @@ bigram_counts <- hm_bigrams %>%
   count(word1, word2, sort = TRUE)
 ```
 
-### Specify the user interface for the R Shiny app
 
-We want each tab to have its own controls for input and so Shiny's "navbarPage()" layout works the best. We have the first tab visualizing the overall data, second one for scatterplots comparing the proportion of words within categories, third one highlighting the most frequently appearing bigrams based on categories and the last tab to explore the actual happy moments.
+
 
 ```{r shiny UI, warning=FALSE, message=FALSE}
+### Specify the user interface for the R Shiny app
 ui <- navbarPage("What makes people happy?",
                  tabPanel("Overview",
                           
@@ -196,15 +176,17 @@ ui <- navbarPage("What makes people happy?",
                  
                  tabPanel("Data",
                           DT::dataTableOutput("table")
-                          )
+                          ),
+                 tabPanel("Map",leafletOutput("mymap",height = 1000))
 )
 ```
 
-### Develop the server for the R Shiny app
 
-This shiny app visualizes summary of data and displays the data table itself.
 
 ```{r shiny server, warning=FALSE, message=FALSE}
+### Develop the server for the R Shiny app
+
+#This shiny app visualizes summary of data and displays the data table itself.
 server <- function(input, output, session) {
   
   pt1 <- reactive({
@@ -268,19 +250,18 @@ server <- function(input, output, session) {
     temp <- bag_of_words %>%
       count(!!as.name(selectedAttribute()$atr), word) %>%
       group_by(!!as.name(selectedAttribute()$atr)) %>%
-      mutate(proportion = n / sum(n)) %>% 
-      select(-n) %>% 
+      mutate(proportion = n / sum(n)) %>%
+      select(-n) %>%
       spread(!!as.name(selectedAttribute()$atr), proportion)
     
-      ggplot(temp, 
-             aes_string(x = colnames(temp)[2], y = colnames(temp)[3]),
+    ggplot(temp,aes_string(x = colnames(temp)[2], y = colnames(temp)[3]),
              color = abs(colnames(temp)[3] - colnames(temp)[2])) +
-      geom_abline(color = "gray40", lty = 2) +
+      geom_abline(color = "red", lty = 2) +
       geom_jitter(alpha = 0.1, size = 1, width = 0.3, height = 0.3) +
       geom_text(aes(label = word), check_overlap = TRUE, vjust = 1.5) +
       scale_x_log10(labels = percent_format()) +
       scale_y_log10(labels = percent_format()) +
-      scale_color_gradient(limits = c(0, 0.001), low = "darkslategray4", high = "gray75") +
+      scale_color_gradient(limits = c(0, 0.001), low = "blue", high = "darkblue") +
       theme(legend.position="none")
   })
   
@@ -307,11 +288,21 @@ server <- function(input, output, session) {
   output$table <- DT::renderDataTable({
     DT::datatable(hm_data)
   })
+  
+   
+ output$mymap <- renderLeaflet({
+   m <- leaflet(hm_data) %>%
+          addTiles() %>% 
+          setView(lng=-93.85, lat=37.45, zoom=2)
+   m
+ })   
 }
 ```
 
-### Run the R Shiny app
+
+
 
 ```{r shiny app, warning=FALSE, message=FALSE}
+### Run the R Shiny app
 shinyApp(ui, server)
 ```
