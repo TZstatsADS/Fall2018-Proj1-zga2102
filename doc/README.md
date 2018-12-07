@@ -2,3 +2,5 @@
 ### Doc folder
 
 The doc directory contains the report or presentation files. It can have subfolders.  
+
+Preview  the project 1 notebook for results.

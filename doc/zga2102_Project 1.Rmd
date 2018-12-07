@@ -1,17 +1,11 @@
 ---
-title: "Project 1"
+title: "Project1"
 output:
+  html_notebook: 
   html_document:
     df_print: paged
 ---
----
-title: "R Notebook"
-author: "Zuleimy Alcantara (zga2102)"
-date: "9/18/2018"
-output:
-  html_document:
-    df_print: paged
----
+
 
 ```{r load libraries, warning=FALSE, message=FALSE}
 library(tm)
