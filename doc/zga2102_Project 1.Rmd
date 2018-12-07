@@ -193,7 +193,7 @@ ggplot2.barplot(data=mod_word_count2, xName="word",yName='n',xtickLabelRotation=
 ggplot2.barplot(data=mod_word_count3, xName="word",yName='n',xtickLabelRotation=90,backgroundColor="lightpink", fill='green',color="blue", ytitle="Frequency", xtitle="Words", mainTitle="Top 10 Words Used by Generation Z")
 
 ```
-  The most commonly used word by millenials and generation Z is friend indicating that there still a predominant human interaction.  It only differs by stage of life a person finds themselves in. The data does not show that love for technology is shying away younger generations from finding happiness in the people that surround them. This just means that there a new methods and avenues to reaching that happiness. 
+  The most commonly used word by millenials and generation Z is friend indicating that there still a predominant human interaction.  It only differs by stage of life a person finds themselves in. The data does not show that love for technology is shying away younger generations from finding happiness in the people that surround them. This just means that there are new methods and avenues to reaching that happiness. 
 
 ```{r, warning=FALSE, message=FALSE}
 # library(easyGgplot2)
