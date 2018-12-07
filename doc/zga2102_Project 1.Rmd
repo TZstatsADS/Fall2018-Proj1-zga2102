@@ -29,7 +29,7 @@ library(easyGgplot2)
  ![](happytech.jpg)
  
 
-About a year ago Forbes Magazine published an article titled “Why Millennials are Lonely".  It claimed that “The second reason for millennial loneliness is the Internet makes it viral” effect. It emphasizes that “It’s not a coincidence that loneliness began to surge two years after Apple launched its first commercial personal computer and five years before Tim Berners-Lee invented the World Wide Web.”  This is a narrative that is seen across major media organizations like New York Times and NPR. These mediums often use representations of millennials as people always on their phone with no touch with the outside world. It is also commonly believed that, millennials don’t want relationships as pointed out by the Huffington Post, almost pointing at a lack of need of human touch by millennials. ![NYT-Are You 21 to 37? You Might Be a Millennial](millenial.jpg) But are millenials as lonely as they claim? Is technology the main cause this loneliness? Are millennials not attracted to human touch anymore? Let’s find out. 
+About a year ago Forbes Magazine published an article titled “Why Millennials are Lonely".  It claimed that “The second reason for millennial loneliness is the Internet makes it viral” effect. It emphasizes that “It’s not a coincidence that loneliness began to surge two years after Apple launched its first commercial personal computer and five years before Tim Berners-Lee invented the World Wide Web.”  This is a narrative that is seen across major media organizations like New York Times and NPR. These mediums often use representations of millennials as people always on their phone with no touch with the outside world. It is also commonly believed that, millennials don’t want relationships as pointed out by the Huffington Post, almost pointing at a lack of need of human touch by millennials. ![NYT-Are You 21 to 37? You Might Be a Millennial](millenial.jpg) But are millenials as lonely as they claim? Is technology the main cause this loneliness? Are millennials not attracted to human touch anymore? Are they any different from previous and following generations. Let’s find out. 
 
 I looked through a database (happyDB) to identify what made people happy. I then selected a group of millennials(generation y), generation x and generation z as defined by the Pew Research Center. Genertion x as people between the ages of 38 and 53. Generation y as people between the ages of 22 and 37. And generation Z as people between the age of 1 and 21. 
 
@@ -69,13 +69,6 @@ hm_data2 <- hm_data2 %>%
 #print(hm_data2)
 ```
 
-
-
-```{r warning=FALSE, message=FALSE}
-#datatable(hm_data2)
-```
-
-
 ```{r bigram, warning=FALSE, message=FALSE}
 #Create bigrams using the text data
 hm_bigrams2 <- hm_data2 %>%
@@ -107,9 +100,6 @@ generationX<-hm_data2 %>%
 # dim(generationZ) 5540   11
 ```
 
-
-
-
 ```{r bag of words, warning=FALSE, message=FALSE}
 ### Create a bag of words using the text data
 
@@ -138,7 +128,7 @@ wordcloud(words = word_count1$word, freq = word_count1$n, min.freq = 1,
           max.words=10000, random.order=FALSE, rot.per=0.35, 
           colors=brewer.pal(8, "Paired"), main="Generation X")
 ```
-For generation X, we seee that there is an emphasis on time and day which can be due to the period in their lives. They are older people, perhaps with different priorities. We can also see that a many of the things that generated happiness were family members. 
+For generation X, we seee that there is an emphasis on time and day.  This can be due to the period they are in their lives. They are older people, perhaps with different priorities which gives them a new perspective on time and how to spend it. We can also see that a many of the things that generated happiness were family members like daughter, son, husband, wife, etc. 
 ## Genration Y##
 ```{r, warning=FALSE, message=FALSE}
 set.seed(1234)
@@ -146,9 +136,10 @@ wordcloud(words = word_count2$word, freq = word_count2$n, min.freq = 1,
           max.words=10000, random.order=FALSE, rot.per=0.35, 
           colors=brewer.pal(8, "Dark2"), main="Generation Y")
 ```
-For generation Y aka the millenials,we can see that there is a commonality in the things that bring them happines. Friends, day , and time seem to be the predominant sources of happiness. There is more in common in the sources of happiness between older and younger generations that is led on by current media. If we look at older millenials( married ones), we can see that family aspect surging on, signaling to the differences being rooted in on the stages of their lives that the person is at not necessarily a generational issue. 
+For generation Y, aka the millenials,we can see that there is a commonality in the things that bring them happines. Friends, day , and time seem to be the predominant sources of happiness. There is more in common in the sources of happiness between older and younger generations that is led on by current media. If we break it up a little more by looking at married and single millenials. 
 
 ```{r}
+par(mfrow=c(2,1))
 #names(hm_data2)
 singles<-hm_data2 %>% 
   select(wid, original_hm, gender, marital, parenthood, reflection_period, age, country, ground_truth_category, text, count) %>%
@@ -175,7 +166,7 @@ mod_word_count_m<-head(word_count_m, n=10)
 ggplot2.barplot(data=mod_word_count_m, xName="word",yName='n',xtickLabelRotation=90,backgroundColor="yellow", fill='yellow',color="blue", ytitle="Frequency", xtitle="Words", mainTitle="What Makes Married Millenials Happy")
 
 ```
-The married millenials graphs shows us that 50% of the top ten words are related to family  something that is also present in the generation X graphs.  
+When we look at older millenials( married ones), we can see that family aspect surging on, signaling to the differences being rooted in on the stages of their lives that the person is at not necessarily a generational issue. The married millenials graphs shows us that 50% of the top ten words are related to family  something that is also present in the generation X graphs. It does not look like technology has influenced whether this happens or not, but rather perhaps, how sooner or later it happens.
 ## Genration Z##  
 ```{r, warning=FALSE, message=FALSE}
 set.seed(1234)
@@ -184,7 +175,7 @@ wordcloud(words = word_count3$word, freq = word_count3$n, min.freq = 1,
           colors=brewer.pal(8, "Set1") ,main="Generation Z")
 
 ```
-The word clous above shows that the most common source of happiness on those 24hours in the lives of millennials were their friends. Out of 72, 060 Millennials that answered the survey, over 8,000 of then included friends and family as their top reason for their happiness. This leads to shy away from these millenial perception of loneliness. 
+For generation Z, the word cloud shows that the most common source of happiness on those 24hours were their friends. 15 % of generation Z included friends as their top reason for their happiness. This leads to shy away from these perception of loneliness in later generations. 
 ```{r, warning=FALSE}
 # install.packages("devtools")
 library(devtools)
@@ -202,7 +193,7 @@ ggplot2.barplot(data=mod_word_count2, xName="word",yName='n',xtickLabelRotation=
 ggplot2.barplot(data=mod_word_count3, xName="word",yName='n',xtickLabelRotation=90,backgroundColor="lightpink", fill='green',color="blue", ytitle="Frequency", xtitle="Words", mainTitle="Top 10 Words Used by Generation Z")
 
 ```
-  The most commonly used word by millenials and generation Z is friend indicating that there still a predominant human interaction.  It only differs by stage of life a person finds themselves in. 
+  The most commonly used word by millenials and generation Z is friend indicating that there still a predominant human interaction.  It only differs by stage of life a person finds themselves in. The data does not show that love for technology is shying away younger generations from finding happiness in the people that surround them. This just means that there a new methods and avenues to reaching that happiness. 
 
 ```{r, warning=FALSE, message=FALSE}
 # library(easyGgplot2)
